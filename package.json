@@ -12,7 +12,9 @@
     "test": "vitest run",
     "lint": "eslint",
     "format": "prettier --check .",
-    "check": "prettier --write . && eslint --fix"
+    "check": "prettier --write . && eslint --fix",
+    "deploy": "npm run build && wrangler deploy",
+    "cf-typegen": "wrangler types"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
@@ -22,12 +24,19 @@
     "@tanstack/react-router-ssr-query": "latest",
     "@tanstack/react-start": "latest",
     "@tanstack/router-plugin": "^1.132.0",
+    "dexie": "^4.4.2",
+    "dexie-react-hooks": "^4.4.0",
+    "framer-motion": "^12.38.0",
     "lucide-react": "^0.545.0",
+    "nanoid": "^5.1.7",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "tailwindcss": "^4.1.18"
+    "tailwindcss": "^4.1.18",
+    "vite-plugin-pwa": "^1.2.0",
+    "workbox-window": "^7.4.0"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.32.2",
     "@tailwindcss/typography": "^0.5.16",
     "@tanstack/devtools-vite": "latest",
     "@tanstack/eslint-config": "latest",
@@ -41,7 +50,8 @@
     "prettier": "^3.8.1",
     "typescript": "^5.7.2",
     "vite": "^8.0.0",
-    "vitest": "^3.0.5"
+    "vitest": "^3.0.5",
+    "wrangler": "^4.82.2"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
