@@ -10,10 +10,10 @@ enabled = true
 
 # Production
 [env.production]
-name = "tgif-v2"
+name = "tigf"
 workers_dev = true
 
 # Develop
 [env.develop]
-name = "tgif-v2-dev"
+name = "tigf-v2-dev"
 workers_dev = true
