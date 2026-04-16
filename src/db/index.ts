@@ -1,4 +1,5 @@
-import Dexie, { type EntityTable } from 'dexie'
+import Dexie from 'dexie'
+import type { EntityTable } from 'dexie'
 import { nanoid } from 'nanoid'
 
 export interface Entry {
@@ -37,42 +38,53 @@ export function countWords(text: string): number {
   return trimmed.split(/\s+/).length
 }
 
-function isSameCalendarDay(left: Date, right: Date): boolean {
-  return (
-    left.getFullYear() === right.getFullYear() &&
-    left.getMonth() === right.getMonth() &&
-    left.getDate() === right.getDate()
-  )
+function getDayBounds(value: Date): { start: Date; end: Date } {
+  const start = new Date(value.getFullYear(), value.getMonth(), value.getDate(), 0, 0, 0, 0)
+  const end = new Date(value.getFullYear(), value.getMonth(), value.getDate(), 23, 59, 59, 999)
+  return { start, end }
 }
 
 export async function getTodayEntry(): Promise<Entry | null> {
   const today = new Date()
-  const allEntries = await db.entries.toArray()
-  const todayEntry = allEntries.find((entry) => isSameCalendarDay(entry.createdAt, today))
-  return todayEntry ?? null
+  return getLatestEntryForDay(today)
 }
 
-export async function saveTodayEntry(body: string): Promise<Entry | null> {
+export async function getEntriesForDay(day: Date): Promise<Entry[]> {
+  const { start, end } = getDayBounds(day)
+  return db.entries.where('createdAt').between(start, end, true, true).sortBy('createdAt')
+}
+
+export async function getLatestEntryForDay(day: Date): Promise<Entry | null> {
+  const dayEntries = await getEntriesForDay(day)
+  return dayEntries[dayEntries.length - 1] ?? null
+}
+
+export async function saveEntrySegment(body: string, entryId: string | null): Promise<Entry | null> {
   const now = new Date()
-  const existing = await getTodayEntry()
+  const trimmedBody = body.trim()
 
-  if (!body.trim() && !existing) {
-    return null
-  }
+  if (entryId) {
+    const existingById = await db.entries.get(entryId)
+    if (!existingById) {
+      return null
+    }
 
-  if (existing) {
     const updatedEntry: Entry = {
-      ...existing,
+      ...existingById,
       body,
       updatedAt: now,
       wordCount: countWords(body),
     }
-    await db.entries.update(existing.id, {
+    await db.entries.update(existingById.id, {
       body: updatedEntry.body,
       updatedAt: updatedEntry.updatedAt,
       wordCount: updatedEntry.wordCount,
     })
     return updatedEntry
+  }
+
+  if (!trimmedBody) {
+    return null
   }
 
   const newEntry: Entry = {
@@ -84,6 +96,11 @@ export async function saveTodayEntry(body: string): Promise<Entry | null> {
   }
   await db.entries.add(newEntry)
   return newEntry
+}
+
+export async function saveTodayEntry(body: string): Promise<Entry | null> {
+  const latestTodayEntry = await getTodayEntry()
+  return saveEntrySegment(body, latestTodayEntry ? latestTodayEntry.id : null)
 }
 
 export async function getMemoryEntry(): Promise<Entry | null> {
@@ -108,4 +125,21 @@ export async function getMemoryEntry(): Promise<Entry | null> {
 
 export async function getHistoryEntries(): Promise<Entry[]> {
   return db.entries.orderBy('createdAt').reverse().toArray()
+}
+
+export async function getMetaValue(key: string): Promise<unknown | null> {
+  const meta = await db.meta.get(key)
+  if (!meta) {
+    return null
+  }
+  return meta.value
+}
+
+export async function setMetaValue(key: string, value: unknown): Promise<void> {
+  const existing = await db.meta.get(key)
+  if (existing) {
+    await db.meta.update(key, { value })
+    return
+  }
+  await db.meta.add({ key, value })
 }

@@ -6,6 +6,7 @@ import { useAppStore } from '../store'
 interface MobileBottomNavbarProps {
   activePreset: FontPreset
   onCyclePreset: () => void
+  onNewClick: () => void
   onHistoryClick: () => void
 }
 
@@ -120,6 +121,7 @@ function CloseIcon(): ReactElement {
 export function MobileBottomNavbar({
   activePreset,
   onCyclePreset,
+  onNewClick,
   onHistoryClick,
 }: MobileBottomNavbarProps): ReactElement {
   const nextModeLabel = NEXT_LABEL_BY_PRESET[activePreset]
@@ -161,6 +163,14 @@ export function MobileBottomNavbar({
             aria-label={`Current mode is ${activeModeLabel}. Tap to switch to ${nextModeLabel}.`}
           >
             {activeModeLabel}
+          </button>
+          <span aria-hidden="true">•</span>
+          <button
+            type="button"
+            onClick={onNewClick}
+            className="cursor-pointer font-medium transition-opacity duration-200 hover:opacity-80"
+          >
+            New
           </button>
           <span aria-hidden="true">•</span>
           <button

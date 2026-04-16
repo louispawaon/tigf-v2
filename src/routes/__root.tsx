@@ -124,7 +124,7 @@ export const Route = createRootRoute({
         content: 'width=device-width, initial-scale=1, viewport-fit=cover',
       },
       {
-        title: 'Today I am Grateful For',
+        title: `Today I'm Grateful For`,
       },
       {
         name: 'theme-color',

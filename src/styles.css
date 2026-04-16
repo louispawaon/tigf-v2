@@ -186,6 +186,40 @@ html[data-font-preset='night'] body {
   padding: 20px 22px;
 }
 
+.gratitude-previous-entry-canvas {
+  min-height: calc(100vh - 340px);
+  border-radius: 18px;
+  background: oklch(var(--background) / 0.52);
+  padding: 16px 18px;
+  animation: previousEntryReveal 240ms ease-out;
+}
+
+.gratitude-previous-timestamp {
+  color: oklch(var(--muted-foreground));
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.gratitude-previous-body {
+  margin: 8px 0 0;
+  color: oklch(var(--foreground) / 0.9);
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-style: italic;
+  line-height: 1.65;
+  white-space: pre-wrap;
+}
+
+.gratitude-transition-hint {
+  margin: 20px 0 0;
+  color: oklch(var(--muted-foreground));
+  font-family: var(--font-body);
+  font-size: 12px;
+  letter-spacing: 0.01em;
+}
+
 .gratitude-textarea {
   display: block;
   width: 100%;
@@ -292,6 +326,17 @@ html[data-font-preset='night'] body {
   }
 }
 
+@keyframes previousEntryReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .history-sidebar {
   position: fixed;
   right: 0;
@@ -357,21 +402,50 @@ html[data-font-preset='night'] .history-sidebar {
   padding: 60px 30px 30px;
 }
 
-.history-entry + .history-entry {
-  margin-top: 25px;
+.history-day-group + .history-day-group {
+  margin-top: 24px;
 }
 
-.history-entry-date {
+.history-day-title {
   margin: 0;
   color: oklch(var(--foreground));
   font-family: var(--font-body);
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1.2;
 }
 
+.history-entry {
+  margin-top: 10px;
+}
+
+.history-entry-button {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+.history-entry-button:hover .history-entry-preview {
+  color: oklch(var(--foreground));
+}
+
+.history-entry-header {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.history-entry-time {
+  color: oklch(var(--muted-foreground));
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+}
+
 .history-entry-preview {
-  margin: 8px 0 0;
+  margin: 6px 0 0;
   color: oklch(var(--foreground) / 0.85);
   font-family: var(--font-heading);
   font-size: 14px;
@@ -411,7 +485,7 @@ html[data-font-preset='night'] .mobile-history-drawer {
 }
 
 .mobile-history-drawer-body .history-entry + .history-entry {
-  margin-top: 25px;
+  margin-top: 10px;
 }
 
 @theme inline {

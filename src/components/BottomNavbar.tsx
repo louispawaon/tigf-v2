@@ -4,6 +4,7 @@ import type { FontPreset } from '../routes/__root'
 interface BottomNavbarProps {
   activePreset: FontPreset
   onPresetChange: (fontPreset: FontPreset) => void
+  onNewClick: () => void
   onHistoryClick: () => void
   isHistoryActive: boolean
 }
@@ -40,6 +41,7 @@ function getOptionStyle(option: PresetOption, activePreset: FontPreset): CSSProp
 export function BottomNavbar({
   activePreset,
   onPresetChange,
+  onNewClick,
   onHistoryClick,
   isHistoryActive,
 }: BottomNavbarProps): ReactElement {
@@ -64,6 +66,10 @@ export function BottomNavbar({
         </div>
 
         <div className="flex items-center gap-2">
+          <button type="button" onClick={onNewClick} className="cursor-pointer font-medium hover:opacity-80">
+            New
+          </button>
+          <span aria-hidden="true">•</span>
           <button
             type="button"
             onClick={onHistoryClick}
