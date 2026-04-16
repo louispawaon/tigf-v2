@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import type { CSSProperties, ReactElement } from 'react'
 import type { FontPreset } from '../routes/__root'
@@ -180,6 +181,13 @@ export function MobileBottomNavbar({
           >
             History
           </button>
+          <span aria-hidden="true">•</span>
+          <Link
+            to="/privacy-policy"
+            className="font-medium transition-opacity duration-200 hover:opacity-80"
+          >
+            Privacy Policy
+          </Link>
           {showInstallButton && (
             <>
               <span aria-hidden="true">•</span>

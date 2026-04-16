@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import type { CSSProperties, ReactElement } from 'react'
 import type { FontPreset } from '../routes/__root'
 
@@ -79,7 +80,9 @@ export function BottomNavbar({
             History
           </button>
           <span aria-hidden="true">•</span>
-          <span className="font-medium">Privacy Policy</span>
+          <Link to="/privacy-policy" className="cursor-pointer font-medium hover:opacity-80">
+            Privacy Policy
+          </Link>
         </div>
       </nav>
     </footer>
