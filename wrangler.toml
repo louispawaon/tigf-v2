@@ -1,5 +1,5 @@
 "$schema" = "node_modules/wrangler/config-schema.json"
-name = "tgif-v2"
+name = "tigf-v2"
 # Set this to today's date
 compatibility_date = "2026-04-14"
 compatibility_flags = [ "nodejs_compat" ]
