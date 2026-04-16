@@ -311,6 +311,7 @@ html[data-font-preset='night'] body {
 
 .mobile-bottom-navbar {
   box-shadow: 0 5px 25px #00000040;
+  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
 }
 
 html.dark .mobile-bottom-navbar,

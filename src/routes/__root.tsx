@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import type { ReactElement } from 'react'
 
 import appCss from '../styles.css?url'
+import { PwaRegister } from '../components/PwaRegister'
 
 export type FontPreset = 'calm' | 'focus' | 'night'
 
@@ -120,14 +121,32 @@ export const Route = createRootRoute({
       },
       {
         name: 'viewport',
-        content: 'width=device-width, initial-scale=1',
+        content: 'width=device-width, initial-scale=1, viewport-fit=cover',
       },
       {
         title: 'Today I am Grateful For',
       },
       {
         name: 'theme-color',
-        content: '#000000',
+        content: '#f8f9fa',
+        media: '(prefers-color-scheme: light)',
+      },
+      {
+        name: 'theme-color',
+        content: '#161820',
+        media: '(prefers-color-scheme: dark)',
+      },
+      {
+        name: 'apple-mobile-web-app-capable',
+        content: 'yes',
+      },
+      {
+        name: 'apple-mobile-web-app-title',
+        content: 'Grateful',
+      },
+      {
+        name: 'apple-mobile-web-app-status-bar-style',
+        content: 'default',
       },
     ],
     links: [
@@ -141,6 +160,7 @@ export const Route = createRootRoute({
       },
       {
         rel: 'apple-touch-icon',
+        sizes: '192x192',
         href: '/logo192.png',
       },
     ],
@@ -157,6 +177,7 @@ function RootDocument({ children }: { children: React.ReactNode }): ReactElement
       </head>
       <body className="bg-background font-sans text-foreground antialiased wrap-anywhere selection:bg-[rgba(79,184,178,0.24)]">
         <FontPresetProvider>{children}</FontPresetProvider>
+        <PwaRegister />
         <Scripts />
       </body>
     </html>
