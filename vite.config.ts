@@ -22,7 +22,7 @@ const config = defineConfig({
       manifest: {
         id: '/',
         name: "Today I'm Grateful For",
-        short_name: 'Grateful',
+        short_name: 'TIGF',
         description: 'What are you grateful for today?',
         theme_color: '#f8f9fa',
         background_color: '#f8f9fa',

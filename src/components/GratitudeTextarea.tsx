@@ -13,7 +13,7 @@ const savedTimeFormatter = new Intl.DateTimeFormat('en-GB', {
   minute: '2-digit',
   hour12: false,
 })
-const starterPromptText = "Today I'm grateful for"
+const starterPromptText = "Today, I'm grateful for"
 
 interface GratitudeTextareaProps {
   value: string
@@ -173,8 +173,8 @@ export function GratitudeTextarea({
             onChange={handleChange}
             onKeyDown={handleKeyDown}
             onFocus={handleEditorFocus}
-            placeholder="Today I'm grateful for..."
-            aria-label="Today I'm grateful for"
+            placeholder={starterPromptText}
+            aria-label={starterPromptText}
             className="gratitude-textarea"
             rows={1}
           />
