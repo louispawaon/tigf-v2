@@ -1,36 +1,12 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import type { ReactElement } from 'react'
-import { BottomNavbar } from '../components/BottomNavbar'
-import { MobileBottomNavbar } from '../components/MobileBottomNavbar'
-import type { FontPreset } from './__root'
-import { useFontPreset } from './__root'
+import { PrivacyPolicyNavbar } from '../components/PrivacyPolicyNavbar'
 
 export const Route = createFileRoute('/privacy-policy')({
   component: PrivacyPolicyPage,
 })
 
-function getNextFontPreset(currentPreset: FontPreset): FontPreset {
-  if (currentPreset === 'calm') {
-    return 'focus'
-  }
-  if (currentPreset === 'focus') {
-    return 'night'
-  }
-  return 'calm'
-}
-
 function PrivacyPolicyPage(): ReactElement {
-  const { fontPreset, setFontPreset } = useFontPreset()
-  const navigate = useNavigate()
-
-  function handleCyclePreset(): void {
-    setFontPreset(getNextFontPreset(fontPreset))
-  }
-
-  function handleReturnHome(): void {
-    void navigate({ to: '/' })
-  }
-
   return (
     <>
       <main className="min-h-screen px-5 pb-20 pt-[100px] sm:px-10 md:px-16 md:pb-24 lg:px-[295px]">
@@ -190,19 +166,7 @@ function PrivacyPolicyPage(): ReactElement {
         </section>
         </article>
       </main>
-      <MobileBottomNavbar
-        activePreset={fontPreset}
-        onCyclePreset={handleCyclePreset}
-        onNewClick={handleReturnHome}
-        onHistoryClick={handleReturnHome}
-      />
-      <BottomNavbar
-        activePreset={fontPreset}
-        onPresetChange={setFontPreset}
-        onNewClick={handleReturnHome}
-        onHistoryClick={handleReturnHome}
-        isHistoryActive={false}
-      />
+      <PrivacyPolicyNavbar />
     </>
   )
 }
