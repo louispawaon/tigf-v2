@@ -7,3 +7,13 @@ main = "@tanstack/react-start/server-entry"
 
 [observability]
 enabled = true
+
+# Production
+[env.production]
+name = "tgif-v2"
+workers_dev = true
+
+# Develop
+[env.develop]
+name = "tgif-v2-dev"
+workers_dev = true
