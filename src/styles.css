@@ -314,6 +314,21 @@ html[data-font-preset='night'] body {
   bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
 }
 
+.ios-install-tip {
+  box-shadow: 0 4px 20px #00000028;
+}
+
+.ios-install-tip-arrow {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 12px;
+  background: oklch(var(--background) / 0.95);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+
 html.dark .mobile-bottom-navbar,
 html[data-font-preset='night'] .mobile-bottom-navbar {
   box-shadow: 0 5px 25px #ffffff40;
