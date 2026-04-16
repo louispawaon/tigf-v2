@@ -5,6 +5,7 @@ import { countWords, getEntriesForDay, getMetaValue, saveEntrySegment, setMetaVa
 const AUTOSAVE_DELAY_MS = 1100
 const SESSION_IDLE_THRESHOLD_MS = 60 * 60 * 1000
 const LAST_ACTIVITY_META_KEY = 'entry:last-activity-at'
+const EMPTY_CANVAS_DAY_META_KEY = 'entry:empty-canvas-day'
 
 interface UseAutosaveTodayEntryResult {
   value: string
@@ -32,6 +33,11 @@ export function useAutosaveTodayEntry(): UseAutosaveTodayEntryResult {
     valueRef.current = value
     savedAtRef.current = savedAt
   }, [value, savedAt])
+
+  function getCurrentDayKey(): string {
+    const now = new Date()
+    return `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}`
+  }
 
   function hasExceededIdleThreshold(nowMs: number): boolean {
     const lastActivityAt = lastActivityAtRef.current
@@ -82,9 +88,10 @@ export function useAutosaveTodayEntry(): UseAutosaveTodayEntryResult {
     let isCancelled = false
 
     async function loadTodayEntry(): Promise<void> {
-      const [entriesForDay, persistedLastActivity] = await Promise.all([
+      const [entriesForDay, persistedLastActivity, persistedEmptyCanvasDay] = await Promise.all([
         getEntriesForDay(new Date()),
         getMetaValue(LAST_ACTIVITY_META_KEY),
+        getMetaValue(EMPTY_CANVAS_DAY_META_KEY),
       ])
       if (isCancelled) {
         return
@@ -96,14 +103,24 @@ export function useAutosaveTodayEntry(): UseAutosaveTodayEntryResult {
 
       const latestEntry = entriesForDay.at(-1)
       const nowMs = Date.now()
+      const currentDayKey = getCurrentDayKey()
+      const hasPersistedEmptyCanvas =
+        typeof persistedEmptyCanvasDay === 'string' && persistedEmptyCanvasDay === currentDayKey
       const shouldStartFreshCanvas =
         latestEntry !== undefined &&
         latestEntry.body.trim().length > 0 &&
-        parsedLastActivity !== null &&
-        nowMs - parsedLastActivity >= SESSION_IDLE_THRESHOLD_MS
+        (hasPersistedEmptyCanvas ||
+          (parsedLastActivity !== null && nowMs - parsedLastActivity >= SESSION_IDLE_THRESHOLD_MS))
 
       if (entriesForDay.length > 0) {
         setPreviousEntries(shouldStartFreshCanvas ? entriesForDay : entriesForDay.slice(0, -1))
+      }
+
+      if (shouldStartFreshCanvas) {
+        currentEntryIdRef.current = null
+        skipNextAutosaveRef.current = true
+        setValueState('')
+        setSavedAt(null)
       }
 
       if (latestEntry !== undefined && !shouldStartFreshCanvas) {
@@ -154,6 +171,9 @@ export function useAutosaveTodayEntry(): UseAutosaveTodayEntryResult {
     const nowMs = Date.now()
     splitCurrentEntry(nowMs, false)
     setValueState(nextValue)
+    if (nextValue.trim().length > 0) {
+      void setMetaValue(EMPTY_CANVAS_DAY_META_KEY, null)
+    }
     void recordActivityAt(nowMs)
   }
 
@@ -164,6 +184,7 @@ export function useAutosaveTodayEntry(): UseAutosaveTodayEntryResult {
     skipNextAutosaveRef.current = true
     setValueState('')
     setSavedAt(null)
+    void setMetaValue(EMPTY_CANVAS_DAY_META_KEY, getCurrentDayKey())
     void recordActivityAt(nowMs)
   }
 
