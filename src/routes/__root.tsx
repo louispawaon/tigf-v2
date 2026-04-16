@@ -1,23 +1,114 @@
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanStackDevtools } from '@tanstack/react-devtools'
-import Footer from '../components/Footer'
-import Header from '../components/Header'
-import { PwaRegister } from '../components/PwaRegister'
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import type { ReactElement } from 'react'
 
 import appCss from '../styles.css?url'
 
-const THEME_INIT_SCRIPT = `(function(){try{var stored=window.localStorage.getItem('theme');var mode=(stored==='light'||stored==='dark'||stored==='auto')?stored:'auto';var prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;var resolved=mode==='auto'?(prefersDark?'dark':'light'):mode;var root=document.documentElement;root.classList.remove('light','dark');root.classList.add(resolved);if(mode==='auto'){root.removeAttribute('data-theme')}else{root.setAttribute('data-theme',mode)}root.style.colorScheme=resolved;}catch(e){}})();`
+export type FontPreset = 'calm' | 'focus' | 'night'
+
+interface FontPresetContextValue {
+  fontPreset: FontPreset
+  setFontPreset: (fontPreset: FontPreset) => void
+}
+
+const FONT_PRESET_STORAGE_KEY = 'font-preset'
+const MODE_TRANSITION_CLASS_NAME = 'mode-transition'
+const MODE_TRANSITION_DURATION_MS = 240
+
+let modeTransitionTimeoutId: number | null = null
+
+const THEME_INIT_SCRIPT = `(function(){try{var stored=window.localStorage.getItem('${FONT_PRESET_STORAGE_KEY}');var isValid=stored==='calm'||stored==='focus'||stored==='night';var prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;var preset=isValid?stored:(prefersDark?'night':'calm');var root=document.documentElement;var resolvedTheme=preset==='night'?'dark':'light';root.setAttribute('data-font-preset',preset);root.classList.remove('light','dark');root.classList.add(resolvedTheme);root.style.colorScheme=resolvedTheme;}catch(e){}})();`
+
+const FontPresetContext = createContext<FontPresetContextValue | null>(null)
+
+function getInitialFontPreset(): FontPreset {
+  if (typeof window === 'undefined') {
+    return 'calm'
+  }
+
+  const storedPreset = window.localStorage.getItem(FONT_PRESET_STORAGE_KEY)
+  if (storedPreset === 'calm' || storedPreset === 'focus' || storedPreset === 'night') {
+    return storedPreset
+  }
+
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'night' : 'calm'
+}
+
+function hasStoredFontPreset(): boolean {
+  if (typeof window === 'undefined') {
+    return false
+  }
+
+  const storedPreset = window.localStorage.getItem(FONT_PRESET_STORAGE_KEY)
+  return storedPreset === 'calm' || storedPreset === 'focus' || storedPreset === 'night'
+}
+
+function applyFontPreset(fontPreset: FontPreset): void {
+  const root = document.documentElement
+  const resolvedTheme = fontPreset === 'night' ? 'dark' : 'light'
+  root.classList.add(MODE_TRANSITION_CLASS_NAME)
+  if (modeTransitionTimeoutId !== null) {
+    window.clearTimeout(modeTransitionTimeoutId)
+  }
+  modeTransitionTimeoutId = window.setTimeout((): void => {
+    root.classList.remove(MODE_TRANSITION_CLASS_NAME)
+    modeTransitionTimeoutId = null
+  }, MODE_TRANSITION_DURATION_MS)
+  root.setAttribute('data-font-preset', fontPreset)
+  root.classList.remove('light', 'dark')
+  root.classList.add(resolvedTheme)
+  root.style.colorScheme = resolvedTheme
+}
+
+function FontPresetProvider({ children }: { children: React.ReactNode }): ReactElement {
+  const [fontPreset, setFontPresetState] = useState<FontPreset>(getInitialFontPreset)
+  const [hasManualSelection, setHasManualSelection] = useState<boolean>(hasStoredFontPreset)
+
+  useEffect(() => {
+    applyFontPreset(fontPreset)
+    if (hasManualSelection) {
+      window.localStorage.setItem(FONT_PRESET_STORAGE_KEY, fontPreset)
+    }
+  }, [fontPreset, hasManualSelection])
+
+  useEffect(() => {
+    if (hasManualSelection) {
+      return
+    }
+
+    const media = window.matchMedia('(prefers-color-scheme: dark)')
+    const onChange = (event: MediaQueryListEvent): void => {
+      setFontPresetState(event.matches ? 'night' : 'calm')
+    }
+    media.addEventListener('change', onChange)
+    return (): void => {
+      media.removeEventListener('change', onChange)
+    }
+  }, [hasManualSelection])
+
+  const value = useMemo<FontPresetContextValue>(() => {
+    return {
+      fontPreset,
+      setFontPreset: (nextFontPreset: FontPreset): void => {
+        setHasManualSelection(true)
+        setFontPresetState(nextFontPreset)
+      },
+    }
+  }, [fontPreset])
+
+  return <FontPresetContext.Provider value={value}>{children}</FontPresetContext.Provider>
+}
+
+export function useFontPreset(): FontPresetContextValue {
+  const context = useContext(FontPresetContext)
+  if (!context) {
+    throw new Error('useFontPreset must be used within FontPresetProvider')
+  }
+  return context
+}
 
 function NotFound() {
-  return (
-    <main className="mx-auto max-w-lg px-4 py-16 text-center">
-      <h1 className="text-2xl font-semibold">Page not found</h1>
-      <p className="mt-2 text-neutral-600 dark:text-neutral-400">
-        The page you are looking for does not exist.
-      </p>
-    </main>
-  )
+  return <main className="flex min-h-screen items-center justify-center px-4 text-center">today, i&apos;m grateful for ...</main>
 }
 
 export const Route = createRootRoute({
@@ -32,7 +123,7 @@ export const Route = createRootRoute({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'TanStack Start Starter',
+        title: 'Today I am Grateful For',
       },
       {
         name: 'theme-color',
@@ -57,29 +148,15 @@ export const Route = createRootRoute({
   shellComponent: RootDocument,
 })
 
-function RootDocument({ children }: { children: React.ReactNode }) {
+function RootDocument({ children }: { children: React.ReactNode }): ReactElement {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <HeadContent />
       </head>
-      <body className="font-sans antialiased wrap-anywhere selection:bg-[rgba(79,184,178,0.24)]">
-        <PwaRegister />
-        <Header />
-        {children}
-        <Footer />
-        <TanStackDevtools
-          config={{
-            position: 'bottom-right',
-          }}
-          plugins={[
-            {
-              name: 'Tanstack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-          ]}
-        />
+      <body className="bg-background font-sans text-foreground antialiased wrap-anywhere selection:bg-[rgba(79,184,178,0.24)]">
+        <FontPresetProvider>{children}</FontPresetProvider>
         <Scripts />
       </body>
     </html>
