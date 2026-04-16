@@ -309,6 +309,15 @@ html[data-font-preset='night'] body {
   will-change: transform, opacity;
 }
 
+.mobile-bottom-navbar {
+  box-shadow: 0 5px 25px #00000040;
+}
+
+html.dark .mobile-bottom-navbar,
+html[data-font-preset='night'] .mobile-bottom-navbar {
+  box-shadow: 0 5px 25px #ffffff40;
+}
+
 html.dark .history-sidebar,
 html[data-font-preset='night'] .history-sidebar {
   box-shadow: 0 5px 25px #ffffff40;
