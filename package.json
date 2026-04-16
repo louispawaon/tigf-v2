@@ -13,8 +13,8 @@
     "lint": "eslint",
     "format": "prettier --check .",
     "check": "prettier --write . && eslint --fix",
-    "deploy:dev": "pnpm build && pnpm wrangler deploy --name tgif-v2-dev",
-    "deploy:prod": "pnpm build && pnpm wrangler deploy --name tgif-v2",
+    "deploy:dev": "pnpm build && pnpm wrangler deploy --env develop",
+    "deploy:prod": "pnpm build && pnpm wrangler deploy --env production",
     "cf-typegen": "wrangler types"
   },
   "dependencies": {
