@@ -154,6 +154,14 @@ export function GratitudeTextarea({
     onEditorFocus()
   }
 
+  function handleTextareaRef(node: HTMLTextAreaElement | null): void {
+    textareaRef.current = node
+    if (!node) {
+      return
+    }
+    autoGrow(node)
+  }
+
   function formatSavedTimestamp(valueToFormat: Date): string {
     const formattedDate = savedDateFormatter.format(valueToFormat)
     const formattedTime = savedTimeFormatter.format(valueToFormat)
@@ -186,7 +194,7 @@ export function GratitudeTextarea({
             </p>
           ) : null}
           <textarea
-            ref={textareaRef}
+            ref={handleTextareaRef}
             value={value}
             onChange={handleChange}
             onKeyDown={handleKeyDown}

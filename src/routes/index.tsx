@@ -128,8 +128,6 @@ function App(): ReactElement {
     delta: 24,
     trackTouch: true,
     trackMouse: false,
-    preventScrollOnSwipe: true,
-    touchEventOptions: { passive: false },
   })
 
   return (
