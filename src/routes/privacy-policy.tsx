@@ -1,8 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
 import type { ReactElement } from 'react'
 import { PrivacyPolicyNavbar } from '../components/PrivacyPolicyNavbar'
+import { buildPrivacyHead } from '../seo/buildHead'
 
 export const Route = createFileRoute('/privacy-policy')({
+  head: () => buildPrivacyHead(),
   component: PrivacyPolicyPage,
 })
 

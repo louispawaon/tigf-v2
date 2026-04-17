@@ -11,8 +11,12 @@ import type { Entry } from '../db'
 import { useAutosaveTodayEntry } from '../hooks/useAutosaveTodayEntry'
 import type { FontPreset } from './__root'
 import { useFontPreset } from './__root'
+import { buildHomeHead } from '../seo/buildHead'
 
-export const Route = createFileRoute('/')({ component: App })
+export const Route = createFileRoute('/')({
+  head: () => buildHomeHead(),
+  component: App,
+})
 
 function getNextFontPreset(currentPreset: FontPreset): FontPreset {
   if (currentPreset === 'calm') {
@@ -118,6 +122,7 @@ function App(): ReactElement {
 
   return (
     <>
+      <h1 className="sr-only">Today I&apos;m grateful for</h1>
       <main
         {...swipeHandlers}
         className={`min-h-screen px-5 pb-20 pt-[100px] sm:px-10 md:px-16 md:pb-24 lg:px-[295px] ${isDesktopHistoryOpen ? 'lg:pr-[330px]' : ''}`}

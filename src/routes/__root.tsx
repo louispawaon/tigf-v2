@@ -4,6 +4,7 @@ import type { ReactElement } from 'react'
 
 import appCss from '../styles.css?url'
 import { PwaRegister } from '../components/PwaRegister'
+import { SITE_NAME } from '../seo/constants'
 
 export type FontPreset = 'calm' | 'focus' | 'night'
 
@@ -108,8 +109,14 @@ export function useFontPreset(): FontPresetContextValue {
   return context
 }
 
-function NotFound() {
-  return <main className="flex min-h-screen items-center justify-center px-4 text-center">today, i&apos;m grateful for ...</main>
+function NotFound(): ReactElement {
+  return (
+    <main className="flex min-h-screen items-center justify-center px-4 text-center">
+      <h1 className="font-heading max-w-[min(36rem,90vw)] text-balance text-[clamp(1.125rem,2.8vw,1.625rem)] font-normal leading-snug tracking-[0.08em] text-foreground [font-variant:small-caps]">
+        you found a blank space in the internet.
+      </h1>
+    </main>
+  )
 }
 
 export const Route = createRootRoute({
@@ -124,7 +131,7 @@ export const Route = createRootRoute({
         content: 'width=device-width, initial-scale=1, viewport-fit=cover',
       },
       {
-        title: `Today I'm Grateful For`,
+        title: SITE_NAME,
       },
       {
         name: 'theme-color',

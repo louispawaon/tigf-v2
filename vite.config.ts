@@ -8,6 +8,8 @@ import viteReact from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
+import { SITE_NAME, SITE_TAGLINE } from './src/seo/constants.ts'
+
 const config = defineConfig({
   resolve: { tsconfigPaths: true },
   plugins: [
@@ -18,12 +20,12 @@ const config = defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: false,
-      includeAssets: ['favicon.ico', 'logo192.png', 'logo512.png', 'robots.txt'],
+      includeAssets: ['favicon.ico', 'logo192.png', 'logo512.png', 'og.png'],
       manifest: {
         id: '/',
-        name: "Today I'm Grateful For",
+        name: SITE_NAME,
         short_name: 'TIGF',
-        description: 'What are you grateful for today?',
+        description: SITE_TAGLINE,
         theme_color: '#f8f9fa',
         background_color: '#f8f9fa',
         display: 'standalone',
