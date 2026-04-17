@@ -14,6 +14,7 @@ const savedTimeFormatter = new Intl.DateTimeFormat('en-GB', {
   hour12: false,
 })
 const starterPromptText = "Today, I'm grateful for"
+const touchHistoryBreakpoint = '(max-width: 1023px)'
 
 interface GratitudeTextareaProps {
   value: string
@@ -45,6 +46,19 @@ export function GratitudeTextarea({
 }: GratitudeTextareaProps): ReactElement {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
   const [viewedEntryIndex, setViewedEntryIndex] = useState<number | null>(null)
+  const [isTouchLayout, setIsTouchLayout] = useState<boolean>(false)
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia(touchHistoryBreakpoint)
+    const updateLayout = (): void => {
+      setIsTouchLayout(mediaQuery.matches)
+    }
+    updateLayout()
+    mediaQuery.addEventListener('change', updateLayout)
+    return (): void => {
+      mediaQuery.removeEventListener('change', updateLayout)
+    }
+  }, [])
 
   useEffect(() => {
     const textarea = textareaRef.current
@@ -157,7 +171,11 @@ export function GratitudeTextarea({
             {formatSavedTimestamp(viewedEntry.updatedAt)}
           </time>
           <p className="gratitude-previous-body">{viewedEntry.body.trim() || 'No entry body yet...'}</p>
-          <p className="gratitude-transition-hint">Scroll down also returns to your active canvas.</p>
+          <p className="gratitude-transition-hint">
+            {isTouchLayout
+              ? 'Swipe up also returns to your active canvas.'
+              : 'Scroll down also returns to your active canvas.'}
+          </p>
         </article>
       ) : (
         <div className="gratitude-textarea-shell">

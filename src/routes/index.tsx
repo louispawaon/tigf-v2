@@ -42,6 +42,10 @@ function isMobileViewport(): boolean {
   return window.matchMedia('(max-width: 767px)').matches
 }
 
+function isMobileOrTabletViewport(): boolean {
+  return window.matchMedia('(max-width: 1023px)').matches
+}
+
 function App(): ReactElement {
   const { fontPreset, setFontPreset } = useFontPreset()
   const {
@@ -115,9 +119,17 @@ function App(): ReactElement {
       }
       setFontPreset(getPreviousFontPreset(fontPreset))
     },
+    onSwipedUp: (): void => {
+      if (!isMobileOrTabletViewport()) {
+        return
+      }
+      handleExitHistoryEntry()
+    },
     delta: 24,
     trackTouch: true,
     trackMouse: false,
+    preventScrollOnSwipe: true,
+    touchEventOptions: { passive: false },
   })
 
   return (
