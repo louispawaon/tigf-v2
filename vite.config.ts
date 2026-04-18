@@ -8,6 +8,8 @@ import viteReact from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
+import { getVitePwaWorkboxOptions } from './pwa-workbox.shared.ts'
+import { pwaClientGenerateSwPlugin } from './vite-plugin-pwa-client-sw.ts'
 import { SITE_NAME, SITE_TAGLINE } from './src/seo/constants.ts'
 
 const config = defineConfig({
@@ -48,30 +50,7 @@ const config = defineConfig({
           },
         ],
       },
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff2}'],
-        navigateFallbackDenylist: [/^\/api\//],
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'google-fonts-css',
-              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 },
-              cacheableResponse: { statuses: [0, 200] },
-            },
-          },
-          {
-            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'google-fonts-files',
-              expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 * 365 },
-              cacheableResponse: { statuses: [0, 200] },
-            },
-          },
-        ],
-      },
+      workbox: getVitePwaWorkboxOptions(),
       devOptions: {
         enabled: true,
         // Dev SW runs from `dev-dist/` with almost no precacheable files; suppressWarnings
@@ -79,6 +58,7 @@ const config = defineConfig({
         suppressWarnings: true,
       },
     }),
+    pwaClientGenerateSwPlugin(),
     cloudflare({ viteEnvironment: { name: 'ssr' } }),
   ],
 })
