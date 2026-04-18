@@ -149,7 +149,7 @@ export const Route = createRootRoute({
       },
       {
         name: 'apple-mobile-web-app-title',
-        content: 'Grateful',
+        content: SITE_NAME,
       },
       {
         name: 'apple-mobile-web-app-status-bar-style',

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f8f9fa" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#161820" />
+    <title>Offline — Today I'm Grateful For</title>
+    <!--
+      No external stylesheets: this page is shown when the network is down, so
+      everything must work from this file + precache. Font stacks match
+      src/styles.css (Inter / Lora with system fallbacks).
+    -->
+    <style>
+      /* Mirrors :root and .dark from src/styles.css — keep loosely in sync when tokens change */
+      :root {
+        --background: 98.48% 0.002 247.85;
+        --foreground: 14.5% 0.016 256.43;
+        --muted-foreground: 45.3% 0.016 256.43;
+        --border: 89.8% 0.006 256.43;
+        --card: 98.48% 0.002 247.85;
+        --radius: 0.625rem;
+        --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
+        --font-heading: 'Lora', ui-serif, Georgia, 'Times New Roman', serif;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --background: 14.5% 0.016 256.43;
+          --foreground: 98.48% 0.002 247.85;
+          --muted-foreground: 65.1% 0.016 256.43;
+          --border: 25.2% 0.016 256.43;
+          --card: 14.5% 0.016 256.43;
+        }
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100dvh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem min(1.5rem, 5vw);
+        font-family: var(--font-body);
+        background: oklch(var(--background));
+        color: oklch(var(--foreground));
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .shell {
+        width: 100%;
+        max-width: min(36rem, 92vw);
+        border-radius: calc(var(--radius) * 3);
+        padding: clamp(1.75rem, 5vw, 2.25rem) clamp(1.25rem, 4vw, 1.75rem);
+        text-align: center;
+        background: oklch(var(--card) / 0.72);
+        border: 1px solid oklch(var(--border) / 0.55);
+        box-shadow:
+          0 1px 2px oklch(var(--foreground) / 0.04),
+          0 12px 40px oklch(var(--foreground) / 0.06);
+      }
+
+      .brand {
+        margin: 0 0 0.75rem;
+        font-family: var(--font-heading);
+        font-size: clamp(1rem, 3.5vw, 1.125rem);
+        font-weight: 400;
+        line-height: 1.35;
+        letter-spacing: 0.08em;
+        font-variant: small-caps;
+        text-wrap: balance;
+      }
+
+      .tagline {
+        margin: 0 0 1.25rem;
+        font-size: clamp(0.8125rem, 2.4vw, 0.9375rem);
+        font-weight: 400;
+        color: oklch(var(--muted-foreground));
+        line-height: 1.45;
+      }
+
+      .message {
+        margin: 0;
+        font-size: clamp(0.9375rem, 2.6vw, 1rem);
+        line-height: 1.55;
+        text-wrap: balance;
+      }
+
+      .hint {
+        margin: 1.25rem 0 0;
+        font-size: clamp(0.75rem, 2vw, 0.8125rem);
+        color: oklch(var(--muted-foreground));
+        line-height: 1.45;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <h1 class="brand">Today I'm Grateful For</h1>
+      <p class="message">
+        You’re offline. Connect once while online to load the app, then you can journal without a network.
+      </p>
+      <p class="hint">This page will reload automatically when you’re back online.</p>
+    </main>
+    <script>
+      window.addEventListener('online', () => {
+        window.location.reload()
+      })
+    </script>
+  </body>
+</html>

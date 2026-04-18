@@ -6,8 +6,15 @@ const DONT_CACHE_BUST_URLS_MATCHING = /^assets\//
 function runtimeCaching(): GenerateSWOptions['runtimeCaching'] {
   return [
     {
-      /** Same-origin document requests — cache SSR HTML after an online visit for offline reload. */
-      urlPattern: ({ request }) => request.mode === 'navigate',
+      /**
+       * Same-origin document requests — cache SSR HTML after an online visit for offline reload.
+       * `precacheFallback` avoids Safari's "FetchEvent.respondWith received an error: no response"
+       * when offline with an empty `tigf-pages` cache (NetworkFirst would otherwise reject).
+       */
+      urlPattern: ({ request, url }) =>
+        request.mode === 'navigate' &&
+        request.method === 'GET' &&
+        url.origin === self.location.origin,
       handler: 'NetworkFirst',
       options: {
         cacheName: 'tigf-pages',
@@ -18,6 +25,9 @@ function runtimeCaching(): GenerateSWOptions['runtimeCaching'] {
         },
         cacheableResponse: {
           statuses: [0, 200],
+        },
+        precacheFallback: {
+          fallbackURL: 'offline.html',
         },
       },
     },
