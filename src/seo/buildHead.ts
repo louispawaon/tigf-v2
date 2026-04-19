@@ -10,8 +10,8 @@ import {
 import { homeSoftwareApplicationJsonLd, privacyWebPageJsonLd } from './jsonld'
 import { absoluteUrl, getOgImageUrl } from './site'
 
-function sharedOgImageMeta() {
-  const imageUrl = getOgImageUrl()
+function sharedOgImageMeta(siteOrigin: string) {
+  const imageUrl = getOgImageUrl(siteOrigin)
   return [
     { property: 'og:image', content: imageUrl },
     { property: 'og:image:alt', content: OG_IMAGE_ALT },
@@ -22,9 +22,9 @@ function sharedOgImageMeta() {
   ]
 }
 
-export function buildHomeHead() {
+export function buildHomeHead(siteOrigin: string) {
   const title = `${SITE_NAME} — ${SITE_TAGLINE}`
-  const url = absoluteUrl('/')
+  const url = absoluteUrl('/', siteOrigin)
   return {
     meta: [
       { title },
@@ -35,18 +35,18 @@ export function buildHomeHead() {
       { property: 'og:url', content: url },
       { property: 'og:type', content: 'website' },
       { property: 'og:site_name', content: SITE_NAME },
-      ...sharedOgImageMeta(),
+      ...sharedOgImageMeta(siteOrigin),
       { name: 'twitter:title', content: title },
       { name: 'twitter:description', content: HOME_META_DESCRIPTION },
-      { 'script:ld+json': homeSoftwareApplicationJsonLd() },
+      { 'script:ld+json': homeSoftwareApplicationJsonLd(siteOrigin) },
     ],
     links: [{ rel: 'canonical', href: url }],
   }
 }
 
-export function buildPrivacyHead() {
+export function buildPrivacyHead(siteOrigin: string) {
   const title = `Privacy Policy | ${SITE_NAME}`
-  const url = absoluteUrl('/privacy-policy')
+  const url = absoluteUrl('/privacy-policy', siteOrigin)
   return {
     meta: [
       { title },
@@ -57,10 +57,10 @@ export function buildPrivacyHead() {
       { property: 'og:url', content: url },
       { property: 'og:type', content: 'website' },
       { property: 'og:site_name', content: SITE_NAME },
-      ...sharedOgImageMeta(),
+      ...sharedOgImageMeta(siteOrigin),
       { name: 'twitter:title', content: title },
       { name: 'twitter:description', content: PRIVACY_META_DESCRIPTION },
-      { 'script:ld+json': privacyWebPageJsonLd() },
+      { 'script:ld+json': privacyWebPageJsonLd(siteOrigin) },
     ],
     links: [{ rel: 'canonical', href: url }],
   }

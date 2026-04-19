@@ -1,11 +1,19 @@
-/**
- * Canonical site origin for absolute URLs (canonical links, Open Graph, JSON-LD, sitemap).
- * Set `VITE_PUBLIC_SITE_URL` in production (e.g. `https://www.example.com`, no trailing slash).
- */
-export function getPublicSiteUrl(): string {
+function normalizePublicSiteOrigin(raw: string): string {
+  const trimmed = raw.trim().replace(/\/$/, '')
+  if (trimmed.startsWith('//')) {
+    return `https:${trimmed}`
+  }
+  if (/^https?:\/\//i.test(trimmed)) {
+    return trimmed
+  }
+  return `https://${trimmed}`
+}
+
+/** Env-based origin — fallback when the incoming request is unavailable (see `resolvePublicSiteOrigin`). */
+export function getConfiguredPublicSiteUrl(): string {
   const raw = import.meta.env.VITE_PUBLIC_SITE_URL
   if (typeof raw === 'string' && raw.trim() !== '') {
-    return raw.replace(/\/$/, '')
+    return normalizePublicSiteOrigin(raw)
   }
   if (import.meta.env.DEV) {
     return 'http://localhost:3000'
@@ -15,8 +23,8 @@ export function getPublicSiteUrl(): string {
   )
 }
 
-export function absoluteUrl(pathname: string): string {
-  const base = getPublicSiteUrl()
+export function absoluteUrl(pathname: string, siteOrigin: string): string {
+  const base = siteOrigin.replace(/\/$/, '')
   if (!pathname.startsWith('/')) {
     return `${base}/${pathname}`
   }
@@ -24,6 +32,6 @@ export function absoluteUrl(pathname: string): string {
 }
 
 /** Absolute URL for [`public/og.png`](/public/og.png) (Open Graph / Twitter Cards). */
-export function getOgImageUrl(): string {
-  return absoluteUrl('/og.png')
+export function getOgImageUrl(siteOrigin: string): string {
+  return absoluteUrl('/og.png', siteOrigin)
 }

@@ -2,9 +2,13 @@ import { createFileRoute } from '@tanstack/react-router'
 import type { ReactElement } from 'react'
 import { PrivacyPolicyNavbar } from '../components/PrivacyPolicyNavbar'
 import { buildPrivacyHead } from '../seo/buildHead'
+import { resolvePublicSiteOrigin } from '../seo/resolvePublicSiteOrigin'
 
 export const Route = createFileRoute('/privacy-policy')({
-  head: () => buildPrivacyHead(),
+  head: async () => {
+    const siteOrigin = await resolvePublicSiteOrigin()
+    return buildPrivacyHead(siteOrigin)
+  },
   component: PrivacyPolicyPage,
 })
 

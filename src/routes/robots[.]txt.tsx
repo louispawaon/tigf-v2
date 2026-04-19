@@ -1,12 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-import { getPublicSiteUrl } from '../seo/site'
+import { getPublicSiteOriginFromRequest } from '../seo/server/requestOrigin'
 
 export const Route = createFileRoute('/robots.txt')({
   server: {
     handlers: {
       GET: (): Response => {
-        const base = getPublicSiteUrl()
+        const base = getPublicSiteOriginFromRequest()
         const body = `User-agent: *
 Disallow:
 

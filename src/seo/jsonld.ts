@@ -6,8 +6,8 @@ import {
 import type { RecordObject } from './meta'
 import { absoluteUrl, getOgImageUrl } from './site'
 
-export function homeSoftwareApplicationJsonLd(): RecordObject {
-  const url = absoluteUrl('/')
+export function homeSoftwareApplicationJsonLd(siteOrigin: string): RecordObject {
+  const url = absoluteUrl('/', siteOrigin)
   return {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
@@ -15,7 +15,7 @@ export function homeSoftwareApplicationJsonLd(): RecordObject {
     description: HOME_META_DESCRIPTION,
     applicationCategory: 'LifestyleApplication',
     operatingSystem: 'Web',
-    image: getOgImageUrl(),
+    image: getOgImageUrl(siteOrigin),
     offers: {
       '@type': 'Offer',
       price: '0',
@@ -25,18 +25,18 @@ export function homeSoftwareApplicationJsonLd(): RecordObject {
   }
 }
 
-export function privacyWebPageJsonLd(): RecordObject {
+export function privacyWebPageJsonLd(siteOrigin: string): RecordObject {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
     name: `Privacy Policy | ${SITE_NAME}`,
     description: PRIVACY_META_DESCRIPTION,
-    image: getOgImageUrl(),
-    url: absoluteUrl('/privacy-policy'),
+    image: getOgImageUrl(siteOrigin),
+    url: absoluteUrl('/privacy-policy', siteOrigin),
     isPartOf: {
       '@type': 'WebSite',
       name: SITE_NAME,
-      url: absoluteUrl('/'),
+      url: absoluteUrl('/', siteOrigin),
     },
   }
 }

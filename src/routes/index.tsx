@@ -12,9 +12,13 @@ import { useAutosaveTodayEntry } from '../hooks/useAutosaveTodayEntry'
 import type { FontPreset } from './__root'
 import { useFontPreset } from './__root'
 import { buildHomeHead } from '../seo/buildHead'
+import { resolvePublicSiteOrigin } from '../seo/resolvePublicSiteOrigin'
 
 export const Route = createFileRoute('/')({
-  head: () => buildHomeHead(),
+  head: async () => {
+    const siteOrigin = await resolvePublicSiteOrigin()
+    return buildHomeHead(siteOrigin)
+  },
   component: App,
 })
 

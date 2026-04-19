@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-import { getPublicSiteUrl } from '../seo/site'
+import { getPublicSiteOriginFromRequest } from '../seo/server/requestOrigin'
 
 function escapeXml(text: string): string {
   return text
@@ -14,7 +14,7 @@ export const Route = createFileRoute('/sitemap.xml')({
   server: {
     handlers: {
       GET: (): Response => {
-        const base = getPublicSiteUrl()
+        const base = getPublicSiteOriginFromRequest()
         const home = escapeXml(`${base}/`)
         const privacy = escapeXml(`${base}/privacy-policy`)
         const body = `<?xml version="1.0" encoding="UTF-8"?>
