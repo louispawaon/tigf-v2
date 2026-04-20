@@ -8,6 +8,10 @@ import viteReact from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
+import { getVitePwaWorkboxOptions } from './pwa-workbox.shared.ts'
+import { pwaClientGenerateSwPlugin } from './vite-plugin-pwa-client-sw.ts'
+import { SITE_NAME, SITE_TAGLINE } from './src/seo/constants.ts'
+
 const config = defineConfig({
   resolve: { tsconfigPaths: true },
   plugins: [
@@ -18,14 +22,16 @@ const config = defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: false,
-      includeAssets: ['favicon.ico', 'robots.txt'],
+      includeAssets: ['favicon.ico', 'logo192.png', 'logo512.png', 'og.png'],
       manifest: {
-        name: 'TIGF',
+        id: '/',
+        name: SITE_NAME,
         short_name: 'TIGF',
-        description: 'TIGF web app',
-        theme_color: '#000000',
-        background_color: '#ffffff',
+        description: SITE_TAGLINE,
+        theme_color: '#f8f9fa',
+        background_color: '#f8f9fa',
         display: 'standalone',
+        orientation: 'portrait',
         start_url: '/',
         scope: '/',
         icons: [
@@ -44,10 +50,7 @@ const config = defineConfig({
           },
         ],
       },
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff2}'],
-        navigateFallbackDenylist: [/^\/api\//],
-      },
+      workbox: getVitePwaWorkboxOptions(),
       devOptions: {
         enabled: true,
         // Dev SW runs from `dev-dist/` with almost no precacheable files; suppressWarnings
@@ -55,6 +58,7 @@ const config = defineConfig({
         suppressWarnings: true,
       },
     }),
+    pwaClientGenerateSwPlugin(),
     cloudflare({ viteEnvironment: { name: 'ssr' } }),
   ],
 })
